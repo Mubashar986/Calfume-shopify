@@ -68,20 +68,18 @@
             endif
           %}
 
-          {% capture slide %}
-            {% # theme-check-disable UniqueStaticBlockId %}
-            {% content_for 'block',
-              type: '_collection-link',
-              id: 'link',
-              closest.collection: collection,
-              index: forloop.index0,
-              current: current,
-              image_only: true
-            %}
-            {% # theme-check-enable UniqueStaticBlockId %}
-          {% endcapture %}
+          {% # theme-check-disable UniqueStaticBlockId %}
+          {% content_for 'block',
+            type: '_collection-link',
+            id: 'link',
+            closest.collection: collection,
+            index: forloop.index0,
+            current: current,
+            image_only: true
+          %}
+          {% # theme-check-enable UniqueStaticBlockId %}
 
-          {% render 'slideshow-slide', children: slide, index: forloop.index0 %}
+          {% render 'slideshow-slide', index: forloop.index0 %}
         {% endfor %}
       {% endcapture %}
 
@@ -272,7 +270,7 @@
         }
       ],
       "default": "right",
-      "visible_if": "{{ section.settings.layout == \"spotlight\" }}"
+      "visible_if": "{{ section.settings.layout == 'spotlight' }}"
     },
     {
       "type": "color_scheme",

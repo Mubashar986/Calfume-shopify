@@ -1,0 +1,300 @@
+{%- comment -%}
+  Scent Visualization Block for Perfume Products
+  This block creates a visual representation of a perfume's scent profile
+  with notes categorized as top, middle, and base notes.
+{%- endcomment -%}
+
+{{ 'scent-visualization.css' | asset_url | stylesheet_tag }}
+{{ 'scent-visualization.js' | asset_url | script_tag }}
+
+{%- liquid
+  assign block_id = block.id
+  assign block_settings = block.settings
+  assign product_metafields = product.metafields.custom
+  
+  # Check if this is a perfume product by looking for scent notes metafields
+  assign has_scent_notes = false
+  if product_metafields.top_notes or product_metafields.middle_notes or product_metafields.base_notes
+    assign has_scent_notes = true
+  endif
+-%}
+
+{%- if has_scent_notes or block_settings.show_for_all_products -%}
+  <scent-visualization class="scent-visualization" {{ block.shopify_attributes }}>
+    <div class="scent-visualization__header">
+      <h3 class="scent-visualization__title">{{ block_settings.title | default: 'Scent Profile' }}</h3>
+      {%- if block_settings.show_description -%}
+        <p class="scent-visualization__description">{{ block_settings.description }}</p>
+      {%- endif -%}
+    </div>
+    
+    <div class="scent-visualization__container">
+      {%- if product_metafields.top_notes -%}
+        <div class="scent-visualization__section">
+          <h4 class="scent-visualization__section-title">{{ block_settings.top_notes_title | default: 'Top Notes' }}</h4>
+          <div class="scent-visualization__notes top-notes">
+            {%- assign top_notes = product_metafields.top_notes | split: ',' -%}
+            {%- for note in top_notes -%}
+              <div class="scent-visualization__note" data-note-type="top">
+                <div class="scent-visualization__note-icon">
+                  {%- render 'icon', icon: 'perfume' -%}
+                </div>
+                <span class="scent-visualization__note-name">{{ note | strip }}</span>
+              </div>
+            {%- endfor -%}
+          </div>
+          {%- if block_settings.show_top_notes_description and product_metafields.top_notes_description -%}
+            <p class="scent-visualization__section-description">{{ product_metafields.top_notes_description }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      
+      {%- if product_metafields.middle_notes -%}
+        <div class="scent-visualization__section">
+          <h4 class="scent-visualization__section-title">{{ block_settings.middle_notes_title | default: 'Middle Notes' }}</h4>
+          <div class="scent-visualization__notes middle-notes">
+            {%- assign middle_notes = product_metafields.middle_notes | split: ',' -%}
+            {%- for note in middle_notes -%}
+              <div class="scent-visualization__note" data-note-type="middle">
+                <div class="scent-visualization__note-icon">
+                  {%- render 'icon', icon: 'plant' -%}
+                </div>
+                <span class="scent-visualization__note-name">{{ note | strip }}</span>
+              </div>
+            {%- endfor -%}
+          </div>
+          {%- if block_settings.show_middle_notes_description and product_metafields.middle_notes_description -%}
+            <p class="scent-visualization__section-description">{{ product_metafields.middle_notes_description }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      
+      {%- if product_metafields.base_notes -%}
+        <div class="scent-visualization__section">
+          <h4 class="scent-visualization__section-title">{{ block_settings.base_notes_title | default: 'Base Notes' }}</h4>
+          <div class="scent-visualization__notes base-notes">
+            {%- assign base_notes = product_metafields.base_notes | split: ',' -%}
+            {%- for note in base_notes -%}
+              <div class="scent-visualization__note" data-note-type="base">
+                <div class="scent-visualization__note-icon">
+                  {%- render 'icon', icon: 'heart' -%}
+                </div>
+                <span class="scent-visualization__note-name">{{ note | strip }}</span>
+              </div>
+            {%- endfor -%}
+          </div>
+          {%- if block_settings.show_base_notes_description and product_metafields.base_notes_description -%}
+            <p class="scent-visualization__section-description">{{ product_metafields.base_notes_description }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </scent-visualization>
+{%- endif -%}
+
+{% stylesheet %}
+  .scent-visualization {
+    margin-bottom: 2rem;
+    font-family: var(--font-heading-family);
+  }
+  
+  .scent-visualization__header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .scent-visualization__title {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem;
+    font-weight: 500;
+  }
+  
+  .scent-visualization__description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.85;
+    margin: 0;
+  }
+  
+  .scent-visualization__container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .scent-visualization__section {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .scent-visualization__section-title {
+    font-size: 1rem;
+    margin: 0 0 0.75rem;
+    font-weight: 500;
+  }
+  
+  .scent-visualization__notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .scent-visualization__note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 2rem;
+    background-color: rgba(var(--color-foreground-rgb), 0.05);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+  
+  .scent-visualization__note:hover {
+    transform: translateY(-2px);
+    background-color: rgba(var(--color-foreground-rgb), 0.08);
+  }
+  
+  .scent-visualization__note-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .scent-visualization__note-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .scent-visualization__note-name {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+  
+  .scent-visualization__section-description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0.75rem 0 0;
+    opacity: 0.85;
+  }
+  
+  /* Note type styling */
+  .top-notes .scent-visualization__note {
+    border-left: 3px solid rgba(var(--color-accent-1), 1);
+  }
+  
+  .middle-notes .scent-visualization__note {
+    border-left: 3px solid rgba(var(--color-accent-2), 1);
+  }
+  
+  .base-notes .scent-visualization__note {
+    border-left: 3px solid rgba(var(--color-accent-3), 1);
+  }
+  
+  @media screen and (min-width: 750px) {
+    .scent-visualization__container {
+      gap: 2rem;
+    }
+    
+    .scent-visualization__title {
+      font-size: 1.4rem;
+    }
+    
+    .scent-visualization__section-title {
+      font-size: 1.1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Scent Visualization",
+  "target": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Scent Profile Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Scent Profile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Experience the layers of this fragrance as they unfold over time.",
+      "visible_if": "{{ block.settings.show_description == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_for_all_products",
+      "label": "Show for all products",
+      "info": "Display this block even for products without scent notes",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Top Notes"
+    },
+    {
+      "type": "text",
+      "id": "top_notes_title",
+      "label": "Top notes title",
+      "default": "Top Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_notes_description",
+      "label": "Show top notes description",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Middle Notes"
+    },
+    {
+      "type": "text",
+      "id": "middle_notes_title",
+      "label": "Middle notes title",
+      "default": "Middle Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_middle_notes_description",
+      "label": "Show middle notes description",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Base Notes"
+    },
+    {
+      "type": "text",
+      "id": "base_notes_title",
+      "label": "Base notes title",
+      "default": "Base Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_base_notes_description",
+      "label": "Show base notes description",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scent Visualization",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

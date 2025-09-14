@@ -1,0 +1,26 @@
+{
+  "product": {
+    "id": "example-product-id",
+    "handle": "example-fragrance",
+    "metafields": [
+      {
+        "namespace": "fragrance",
+        "key": "top_notes",
+        "value": "Bergamot,Lemon,Lavender,Grapefruit",
+        "type": "string"
+      },
+      {
+        "namespace": "fragrance",
+        "key": "middle_notes",
+        "value": "Rose,Jasmine,Ylang-Ylang,Geranium",
+        "type": "string"
+      },
+      {
+        "namespace": "fragrance",
+        "key": "base_notes",
+        "value": "Sandalwood,Vanilla,Musk,Amber",
+        "type": "string"
+      }
+    ]
+  }
+}
